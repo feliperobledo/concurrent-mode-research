@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, SuspenseListProps } from "react";
 
 import { Img, resource } from "react-suspense-img";
 
@@ -27,8 +27,14 @@ const IMAGES = [
 ];
 
 export const SuspenseListExample = () => {
+  //const revealOrder = "backwards",
+  const revealOrder = "forwards";
+
+  //const tail = "hidden",
+  const tail = "collapsed";
+
   return (
-    <React.SuspenseList revealOrder="forwards" tail="collapsed">
+    <React.SuspenseList revealOrder={revealOrder} tail={tail}>
       {IMAGES.map((src) => {
         resource.preloadImage(src);
 
