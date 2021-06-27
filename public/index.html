@@ -28,6 +28,19 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script>
+        window.useExperimental = true;
+
+        /*
+        Priority levels:
+            unstable_ImmediatePriority = 1;
+            unstable_UserBlockingPriority = 2;
+            unstable_NormalPriority = 3;
+            unstable_IdlePriority = 5;
+            unstable_LowPriority = 4;
+        */
+        window.priority = 5;
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
