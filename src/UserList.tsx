@@ -132,11 +132,10 @@ const UserResource = () => {
   };
 };
 
-const resource = UserResource();
+export const resource = UserResource();
 
 export const UserScheduled = (props: { id: string }) => {
   const data = resource.user(props.id).read();
-
   const user = (data as unknown) as UserData; // don't know why the compiler requires I do this first
   return (
     <div style={{ outline: "1px solid black" }}>

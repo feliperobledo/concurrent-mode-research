@@ -8,7 +8,8 @@ const FALLBACK = (
       display: "inline-block",
       width: 64,
       height: 64,
-      backgroundColor: "#ccc",
+      backgroundColor: "red",
+      outline: "1px solid black",
     }}
   />
 );
