@@ -69,7 +69,7 @@ export class User extends React.Component<any, UserState> {
     if (!data) {
       return <p>Loading...</p>;
     } else {
-      const user = (data as unknown) as UserData; // don't know why the compiler requires I do this first
+      const user = data as unknown as UserData; // don't know why the compiler requires I do this first
       return (
         <div style={{ outline: "1px solid black" }}>
           <p>
@@ -86,21 +86,34 @@ export class User extends React.Component<any, UserState> {
 // ==============================================
 // Resource Method
 // ==============================================
+//
+interface ResourceObject<T> {
+  read: () => T;
+  task: () => Promise<T>;
+}
 
-const UserResource = () => {
-  const _promiseCache: { [key: string]: { read: () => any } } = {};
+interface Reader<T> {
+  data: (id: string) => ResourceObject<T>;
+}
+
+interface ResourceType<T> {
+  (): Reader<T>;
+}
+
+function createResource<T>(callback: () => Promise<T>): Reader<T> {
+  const _promiseCache: { [key: string]: ResourceObject<T> } = {};
 
   // Suspense integrations like Relay implement
   // a contract like this to integrate with React.
   // Real implementations can be significantly more complex.
   // Don't copy-paste this into your project!
-  function wrapPromise() {
-    const promise = getUserProfile();
+  function wrapPromise(): ResourceObject<T> {
+    const promise: Promise<T> = callback();
 
     let status = "pending";
-    let result: any;
+    let result: T;
     let suspender = promise.then(
-      (r) => {
+      (r: T) => {
         status = "success";
         result = r;
       },
@@ -110,33 +123,39 @@ const UserResource = () => {
       }
     );
     return {
-      read() {
+      read: (): T => {
         if (status === "pending") {
           throw suspender;
         } else if (status === "error") {
           throw result;
-        } else if (status === "success") {
+        } else {
           return result;
         }
       },
+      task: () => promise,
     };
   }
 
   return {
-    user: (id: string) => {
+    data: (id: string): ResourceObject<T> => {
       if (!_promiseCache[id]) {
         _promiseCache[id] = wrapPromise();
       }
       return _promiseCache[id];
     },
   };
-};
+}
 
-export const resource = UserResource();
+export const resource = createResource(getUserProfile);
 
-export const UserScheduled = (props: { id: string }) => {
-  const data = resource.user(props.id).read();
-  const user = (data as unknown) as UserData; // don't know why the compiler requires I do this first
+export const UserScheduled = (props: {
+  id: string;
+  _resource?: ResourceObject<UserData>;
+}) => {
+  const data = props._resource
+    ? props._resource.read()
+    : resource.data(props.id).read();
+  const user = data as unknown as UserData; // don't know why the compiler requires I do this first
   return (
     <div style={{ outline: "1px solid black" }}>
       <p>
