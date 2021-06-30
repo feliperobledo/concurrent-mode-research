@@ -2,6 +2,17 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## What is this about?
+
+Explore the experimental concurrent mode APIs in the upcoming React 18 release.
+
+Please keep in mind that a lot of this is prone to change by changes in the interfaces & implementation details done by the React team.
+
+## TODO
+
+- [ ] Investigate further how priority levels affect `unstable_scheduleCallback`
+- [ ] Look into how to properly use `unstable_pauseExecution` & `unstable_continueExecution`
+
 ## Available Scripts
 
 In the project directory, you can run:
